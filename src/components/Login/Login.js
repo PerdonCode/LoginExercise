@@ -43,30 +43,31 @@ const passwordReducer = (state, action) => {
 }
 
 const Login = (props) => {
-  const [enteredPassword, setEnteredPassword] = useState("");
   const [formIsValid, setFormIsValid] = useState(false);
-
   const [emailState, dispatchEmail] = useReducer(emailReducer, {
     value: "",
     isValid: null,
   });
-
   const [passwordState, dispatchPassword] = useReducer (passwordReducer, {
     value: "",
     isValid: null,
   })
 
+  //alias assignment not a value assignment
+  const {isValid: emailIsValid} = emailState;
+  const {isValid: passwordIsValid} = passwordState;
+
   useEffect(() => {
     // debounce en check after 5000ms again otherwise you will have a reguest after every key change which will be a lot(example: 40-60) of requests
     const identifier = setTimeout(() => {
-      setFormIsValid(emailState.isValid && passwordState.isValid);
+      setFormIsValid(emailIsValid && passwordIsValid);
     }, 500);
     // clean up function
     // this helps prevent a lot of http requests
     return () => {
       clearTimeout(identifier);
     };
-  }, [emailState.isValid, passwordState.isValid]);
+  }, [emailIsValid, passwordIsValid]); // To optimize unnecessary execution and improve performance
 
   const emailChangeHandler = (event) => {
     dispatchEmail({ type: "USER_INPUT", val: event.target.value });
